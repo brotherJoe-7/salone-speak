@@ -1,0 +1,7 @@
+-- Verify tables were created successfully
+select table_name from information_schema.tables 
+where table_schema = 'public' and table_type = 'BASE TABLE';
+
+-- Check RLS status
+select relname, relrowsecurity from pg_class 
+where relname in ('admins', 'feedback');
