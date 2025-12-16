@@ -30,3 +30,10 @@ create index if not exists messages_received_at_idx on messages(received_at desc
 grant select on messages to anon;
 grant select on messages to authenticated;
 grant select,insert on messages to service_role;
+
+-- Ensure legacy/older schemas are compatible: make sure a "timestamp" column exists,
+-- backfill any NULL values, set a default, and enforce NOT NULL for future inserts.
+alter table messages add column if not exists "timestamp" timestamp;
+update messages set "timestamp" = coalesce("timestamp", now()) where "timestamp" is null;
+alter table messages alter column "timestamp" set default now();
+alter table messages alter column "timestamp" set not null;
