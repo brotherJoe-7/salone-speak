@@ -20,6 +20,10 @@ create policy "public_can_read_messages" on messages for select to public using 
 create policy "service_can_insert_messages" on messages for insert with check (true);
 
 -- Create index on received_at for sorting
+-- Ensure `received_at` column exists for older deployments
+alter table messages add column if not exists received_at timestamp default now();
+
+-- Create index on received_at for sorting
 create index if not exists messages_received_at_idx on messages(received_at desc);
 
 -- Grant permissions
